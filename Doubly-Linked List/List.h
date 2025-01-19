@@ -64,6 +64,19 @@ public:
             tail = head = back;
         }
     }
+
+    void pop_front() {
+        if (head) {
+            auto temp = head;
+            head = head->next;
+            if (head) {
+                head->prev = nullptr;
+            } else {
+                tail = nullptr;
+                tail->prev = nullptr;
+            }
+        }
+    }
 };
 
 #endif

@@ -91,6 +91,19 @@ public:
         }
     }
 
+    void insert(T data, size_t index) {
+        if (index) {
+            auto temp = head;
+            for (size_t i = 0; i < index - 1; ++i) {
+                temp = temp->next;
+            }
+            auto next = temp->next;
+            temp->next = new Node<T>(data, next);
+        } else {
+            push_front(data);
+        }
+    }
+
     T operator[](size_t index) {
         auto temp = head;
         for (size_t i = 0; i < index; ++i) {
