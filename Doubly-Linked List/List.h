@@ -78,7 +78,9 @@ public:
         }
     }
 
-    void pop_back(){}
+    void pop_back() {
+
+    }
 };
 
 #endif
