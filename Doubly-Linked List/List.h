@@ -77,6 +77,8 @@ public:
             }
         }
     }
+
+    void pop_back(){}
 };
 
 #endif
