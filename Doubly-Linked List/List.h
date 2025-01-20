@@ -39,30 +39,34 @@ public:
     }
 
     T front() {
-        return head ? head->data : T();
+        if (head) {
+            return head->data;
+        }
+        throw std::out_of_range("List is empty");
     }
 
     T back() {
-        return tail ? tail->data : T();
+        if (tail) {
+            return tail->data;
+        }
+        throw std::out_of_range("List is empty");
     }
 
     void push_front(T data) {
-        auto front = new Node<T>(data, head, nullptr);
         if (head) {
-            head->prev = front;
-            head = front;
+            head->prev = new Node<T>(data, head, nullptr);
+            head = head->prev;
         } else {
-            head = tail = front;
+            head = tail = new Node<T>(data);
         }
     }
 
     void push_back(T data) {
-        auto back = new Node<T>(data, nullptr, tail);
         if (tail) {
-            tail->next = back;
-            tail = back;
+            tail->next = new Node<T>(data, nullptr, tail);
+            tail = tail->next;
         } else {
-            tail = head = back;
+            tail = head = new Node<T>(data);
         }
     }
 
@@ -93,7 +97,7 @@ public:
     }
 
     void insert(T data, const size_t index) {
-        if (head) {
+        if (index) {
             auto temp = head;
             for (size_t i = 0; i < index; ++i) {
                 if (temp == nullptr) {
@@ -114,6 +118,39 @@ public:
             }
         } else {
             push_front(data);
+        }
+    }
+
+    void remove(const size_t index) {
+        if (!head) {
+            throw std::out_of_range("List is empty");
+        }
+
+        auto temp = head;
+        for (size_t i = 0; i < index; ++i) {
+            if (temp == nullptr) {
+                throw std::out_of_range("Index out of range");
+            }
+            temp = temp->next;
+        }
+        if (temp == nullptr) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        auto prev = temp->prev;
+        auto next = temp->next;
+        delete temp;
+
+        if (prev) {
+            prev->next = next;
+        } else {
+            head = next;
+        }
+
+        if (next) {
+            next->prev = prev;
+        } else {
+            tail = prev;
         }
     }
 };
