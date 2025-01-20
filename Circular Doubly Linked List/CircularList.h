@@ -1,5 +1,6 @@
 #ifndef CIRCULARLIST_H
 #define CIRCULARLIST_H
+#include <stdexcept>
 
 template <typename T>
 struct Node {
@@ -23,6 +24,28 @@ public:
     CircularList() : head(new Node<T>()) {
         head->next = head;
         head->prev = head;
+    }
+
+    T front() {
+        if (!head->next) {
+            throw std::out_of_range("List is empty");
+        }
+        return head->next->data;
+    }
+
+    T back() {
+        if (!head->prev) {
+            throw std::out_of_range("List is empty");
+        }
+        return head->prev->data;
+    }
+
+    void push_front(T data) {
+        head->next = new Node<T>(data, head->next, head);
+    }
+
+    void push_back(T data) {
+        head->prev = new Node<T>(data, head, head->prev);
     }
 };
 
