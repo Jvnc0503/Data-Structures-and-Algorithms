@@ -175,6 +175,42 @@ public:
 
         return temp->data;
     }
+
+    bool empty() {
+        return !head;
+    }
+
+    size_t size() {
+        size_t size = 0;
+        auto temp = head;
+        while (temp) {
+            ++size;
+            temp = temp->next;
+        }
+        return size;
+    }
+
+    void clear() {
+        auto temp = head;
+        while (temp) {
+            auto next = temp->next;
+            delete temp;
+            temp = next;
+        }
+    }
+
+    void reverse() {
+        auto temp = head;
+        while (temp) {
+            auto next = temp->next;
+            temp->next = temp->prev;
+            temp->prev = next;
+            temp = next;
+        }
+        temp = head;
+        head = tail;
+        tail = temp;
+    }
 };
 
 #endif
