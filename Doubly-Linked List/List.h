@@ -1,5 +1,6 @@
 #ifndef LIST_H
 #define LIST_H
+#include <stdexcept>
 
 template<typename T>
 struct Node {
@@ -74,7 +75,6 @@ public:
                 head->prev = nullptr;
             } else {
                 tail = nullptr;
-                tail->prev = nullptr;
             }
         }
     }
@@ -88,8 +88,32 @@ public:
                 tail->next = nullptr;
             } else {
                 head = nullptr;
-                head->next = nullptr;
             }
+        }
+    }
+
+    void insert(T data, const size_t index) {
+        if (head) {
+            auto temp = head;
+            for (size_t i = 0; i < index; ++i) {
+                if (temp == nullptr) {
+                    throw std::out_of_range("Index out of range");
+                }
+                temp = temp->next;
+            }
+            if (temp == nullptr) {
+                throw std::out_of_range("Index out of range");
+            }
+            if (temp == tail) {
+                temp->next = new Node<T>(data, nullptr, temp);
+                tail = temp->next;
+            } else {
+                auto next = temp->next;
+                temp->next = new Node<T>(data, next, temp);
+                next->prev = temp->next;
+            }
+        } else {
+            push_front(data);
         }
     }
 };

@@ -1,5 +1,6 @@
 #ifndef FORWARDLIST_H
 #define FORWARDLIST_H
+#include <stdexcept>
 
 template<typename T>
 struct Node {
@@ -12,16 +13,17 @@ struct Node {
     explicit Node(T data) : data(data), next(nullptr) {
     }
 
-    explicit Node(Node* next) : next(next) {
+    explicit Node(Node *next) : next(next) {
     }
 
-    Node(T data, Node* next) : data(data), next(next) {
+    Node(T data, Node *next) : data(data), next(next) {
     }
 };
 
 template<typename T>
 class ForwardList {
     Node<T> *head;
+
 public:
     ForwardList() : head(nullptr) {
     }
@@ -91,11 +93,17 @@ public:
         }
     }
 
-    void insert(T data, size_t index) {
+    void insert(T data, const size_t index) {
         if (index) {
             auto temp = head;
             for (size_t i = 0; i < index - 1; ++i) {
+                if (temp == nullptr) {
+                    throw std::out_of_range("Index out of range");
+                }
                 temp = temp->next;
+            }
+            if (temp == nullptr) {
+                throw std::out_of_range("Index out of range");
             }
             auto next = temp->next;
             temp->next = new Node<T>(data, next);
@@ -104,13 +112,16 @@ public:
         }
     }
 
-    T operator[](size_t index) {
+    T operator[](const size_t index) {
         auto temp = head;
         for (size_t i = 0; i < index; ++i) {
-            temp = temp->next;
             if (temp == nullptr) {
-                return T();
+                throw std::out_of_range("Index out of range");
             }
+            temp = temp->next;
+        }
+        if (temp == nullptr) {
+            throw std::out_of_range("Index out of range");
         }
         return temp->data;
     }
@@ -141,7 +152,7 @@ public:
     void sort() {
         if (head && head->next) {
             auto current = head;
-            Node<T>* sorted = nullptr;
+            Node<T> *sorted = nullptr;
             while (current) {
                 auto next = current->next;
                 if (!sorted || sorted->data >= current->data) {
@@ -162,7 +173,7 @@ public:
 
     void reverse() {
         if (head && head->next) {
-            Node<T>* prev = nullptr;
+            Node<T> *prev = nullptr;
             auto current = head;
             auto next = head->next;
             while (current) {
