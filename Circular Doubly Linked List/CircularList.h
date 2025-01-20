@@ -47,6 +47,18 @@ public:
     void push_back(T data) {
         head->prev = new Node<T>(data, head, head->prev);
     }
+
+    T pop_front() {
+        if (head->next == head) {
+            throw std::out_of_range("List is empty");
+        }
+        T data = head->next->data;
+        auto temp = head->next;
+        head->next = temp->next;
+        delete temp;
+        head->next->prev = head;
+        return data;
+    }
 };
 
 #endif
