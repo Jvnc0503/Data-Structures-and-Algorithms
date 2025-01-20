@@ -104,10 +104,14 @@ public:
 
         auto temp = head;
         for (size_t i = 0; i < index - 1; ++i) {
-            if (temp == nullptr) {
+            if (!temp) {
                 throw std::out_of_range("Index out of range");
             }
             temp = temp->next;
+        }
+
+        if (!temp) {
+            throw std::out_of_range("Index out of range");
         }
 
         if (temp == tail) {
@@ -126,12 +130,12 @@ public:
 
         auto temp = head;
         for (size_t i = 0; i < index; ++i) {
-            if (temp == nullptr) {
+            if (!temp) {
                 throw std::out_of_range("Index out of range");
             }
             temp = temp->next;
         }
-        if (temp == nullptr) {
+        if (!temp) {
             throw std::out_of_range("Index out of range");
         }
 
@@ -150,6 +154,26 @@ public:
         } else {
             tail = prev;
         }
+    }
+
+    T operator[](const size_t index) const {
+        if (!head) {
+            throw std::out_of_range("List is empty");
+        }
+
+        auto temp = head;
+        for (size_t i = 0; i < index; ++i) {
+            if (!temp) {
+                throw std::out_of_range("Index out of range");
+            }
+            temp = temp->next;
+        }
+
+        if (!temp) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        return temp->data;
     }
 };
 
