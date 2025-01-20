@@ -69,6 +69,7 @@ public:
         if (head) {
             auto temp = head;
             head = head->next;
+            delete temp;
             if (head) {
                 head->prev = nullptr;
             } else {
@@ -79,7 +80,17 @@ public:
     }
 
     void pop_back() {
-
+        if (tail) {
+            auto temp = tail;
+            tail = tail->prev;
+            delete temp;
+            if (tail) {
+                tail->next = nullptr;
+            } else {
+                head = nullptr;
+                head->next = nullptr;
+            }
+        }
     }
 };
 
