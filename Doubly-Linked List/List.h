@@ -97,27 +97,25 @@ public:
     }
 
     void insert(T data, const size_t index) {
-        if (index) {
-            auto temp = head;
-            for (size_t i = 0; i < index; ++i) {
-                if (temp == nullptr) {
-                    throw std::out_of_range("Index out of range");
-                }
-                temp = temp->next;
-            }
+        if (index == 0) {
+            push_front(data);
+            return;
+        }
+
+        auto temp = head;
+        for (size_t i = 0; i < index - 1; ++i) {
             if (temp == nullptr) {
                 throw std::out_of_range("Index out of range");
             }
-            if (temp == tail) {
-                temp->next = new Node<T>(data, nullptr, temp);
-                tail = temp->next;
-            } else {
-                auto next = temp->next;
-                temp->next = new Node<T>(data, next, temp);
-                next->prev = temp->next;
-            }
+            temp = temp->next;
+        }
+
+        if (temp == tail) {
+            push_back(data);
         } else {
-            push_front(data);
+            auto next = temp->next;
+            temp->next = new Node<T>(data, next, temp);
+            next->prev = temp->next;
         }
     }
 
