@@ -35,26 +35,29 @@ public:
             delete temp;
             temp = next;
         }
+        head = nullptr;
     }
 
     T front() {
-        return head ? head->data : T();
+        if (!head) {
+            throw std::out_of_range("List is empty");
+        }
+        return head->data;
     }
 
     T back() {
-        if (head) {
-            auto temp = head;
-            while (temp->next) {
-                temp = temp->next;
-            }
-            return temp->data;
+        if (!head) {
+            throw std::out_of_range("List is empty");
         }
-        return T();
+        auto temp = head;
+        while (temp->next) {
+            temp = temp->next;
+        }
+        return temp->data;
     }
 
     void push_front(T data) {
-        auto front = new Node<T>(data, head);
-        head = front;
+        head = new Node<T>(data, head);
     }
 
     void push_back(T data) {
@@ -71,63 +74,89 @@ public:
     }
 
     void pop_front() {
-        if (head) {
-            auto temp = head;
-            head = head->next;
-            delete temp;
+        if (!head) {
+            throw std::out_of_range("List is empty");
         }
+        auto temp = head;
+        head = head->next;
+        delete temp;
     }
 
     void pop_back() {
-        if (head) {
-            if (head->next) {
-                auto temp = head;
-                while (temp->next->next) {
-                    temp = temp->next;
-                }
-                delete temp->next;
-                temp->next = nullptr;
-            } else {
-                head = nullptr;
+        if (!head) {
+            throw std::out_of_range("List is empty");
+        }
+        if (!head->next) {
+            delete head;
+            head = nullptr;
+        } else {
+            auto temp = head;
+            while (temp->next->next) {
+                temp = temp->next;
             }
+            delete temp->next;
+            temp->next = nullptr;
         }
     }
 
     void insert(T data, const size_t index) {
-        if (index) {
-            auto temp = head;
-            for (size_t i = 0; i < index - 1; ++i) {
-                if (temp == nullptr) {
-                    throw std::out_of_range("Index out of range");
-                }
-                temp = temp->next;
-            }
-            if (temp == nullptr) {
-                throw std::out_of_range("Index out of range");
-            }
-            auto next = temp->next;
-            temp->next = new Node<T>(data, next);
-        } else {
+        if (index == 0) {
             push_front(data);
+            return;
         }
-    }
-
-    T operator[](const size_t index) {
         auto temp = head;
-        for (size_t i = 0; i < index; ++i) {
-            if (temp == nullptr) {
+        for (size_t i = 0; i < index - 1; ++i) {
+            if (!temp) {
                 throw std::out_of_range("Index out of range");
             }
             temp = temp->next;
         }
-        if (temp == nullptr) {
+        if (!temp) {
+            throw std::out_of_range("Index out of range");
+        }
+        auto next = temp->next;
+        temp->next = new Node<T>(data, next);
+    }
+
+    void remove(const size_t index) {
+        if (!head) {
+            throw std::out_of_range("List is empty");
+        }
+        if (index == 0) {
+            pop_front();
+            return;
+        }
+        auto temp = head;
+        for (size_t i = 0; i < index - 1; ++i) {
+            if (!temp) {
+                throw std::out_of_range("Index out of range");
+            }
+            temp = temp->next;
+        }
+        if (!temp || !temp->next) {
+            throw std::out_of_range("Index out of range");
+        }
+        auto next = temp->next->next;
+        delete temp->next;
+        temp->next = next;
+    }
+
+    T &operator[](const size_t index) {
+        auto temp = head;
+        for (size_t i = 0; i < index; ++i) {
+            if (!temp) {
+                throw std::out_of_range("Index out of range");
+            }
+            temp = temp->next;
+        }
+        if (!temp) {
             throw std::out_of_range("Index out of range");
         }
         return temp->data;
     }
 
     bool empty() {
-        return head == nullptr;
+        return !head;
     }
 
     size_t size() {
@@ -147,28 +176,31 @@ public:
             delete temp;
             temp = next;
         }
+        head = nullptr;
     }
 
     void sort() {
-        if (head && head->next) {
-            auto current = head;
-            Node<T> *sorted = nullptr;
-            while (current) {
-                auto next = current->next;
-                if (!sorted || sorted->data >= current->data) {
-                    current->next = sorted;
-                    sorted = current;
-                } else {
-                    auto temp = sorted;
-                    while (temp->next && temp->next->data < current->data) {
-                        temp = temp->next;
-                    }
-                    current->next = temp->next;
-                    temp->next = current;
-                }
-                current = next;
-            }
+        if (!head || !head->next) {
+            return;
         }
+        auto current = head;
+        Node<T> *sorted = nullptr;
+        while (current) {
+            auto next = current->next;
+            if (!sorted || sorted->data >= current->data) {
+                current->next = sorted;
+                sorted = current;
+            } else {
+                auto temp = sorted;
+                while (temp->next && temp->next->data < current->data) {
+                    temp = temp->next;
+                }
+                current->next = temp->next;
+                temp->next = current;
+            }
+            current = next;
+        }
+        head = sorted;
     }
 
     void reverse() {

@@ -36,6 +36,7 @@ public:
             delete temp;
             temp = next;
         }
+        head = tail = nullptr;
     }
 
     T front() {
