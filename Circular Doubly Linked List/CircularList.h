@@ -10,11 +10,13 @@ struct Node {
 
     Node() : next(nullptr), prev(nullptr) {}
 
-    explicit Node(T data) : data(data), next(nullptr), prev(nullptr) {}
+    explicit Node(const T& data) : data(data), next(nullptr), prev(nullptr) {}
 
     Node(Node* next, Node* prev) : next(next), prev(prev) {}
 
-    Node(T data, Node* next, Node* prev) : data(data), next(next), prev(prev) {}
+    Node(const T& data, Node* next, Node* prev) : data(data), next(next), prev(prev) {}
+
+    ~Node() = default;
 };
 
 template <typename T>
