@@ -2,6 +2,7 @@
 #define HASHTABLE_H
 
 #include <random>
+#include <utility>
 
 template <typename T1, typename T2>
 struct Node {
@@ -20,8 +21,12 @@ class HashTable {
     const size_t p = 1000000007;    //Large prime number
     size_t size;
 
-    size_t hash(T1 key) {
+    size_t hash(const T1& key) {
         return ((a * key + b) % p) % size;
+    }
+
+    size_t hash(const std::string &key) {
+        return hash(std::hash<std::string>{}(key));
     }
 
     void initialize() {
