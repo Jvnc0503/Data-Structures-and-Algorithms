@@ -2,6 +2,7 @@
 #define HASHTABLE_H
 
 #include <random>
+#include <cmath>
 
 template <typename T1, typename T2>
 struct Node {
@@ -15,18 +16,19 @@ struct Node {
 template <typename T1, typename T2>
 class HashTable {
     Node<T1, T2>** table;
-    size_t a;
-    size_t b;
-    const size_t p = 1000000007;
-    size_t size;
-    size_t elements;
+    size_t a, b, size = 100, elements = 0;
+    size_t const p = 1e9 + 7;
 
     size_t hash(const T1& key) {
         return ((a * key + b) % p) % size;
     }
 
     size_t hash(const std::string &key) {
-        return hash(std::hash<std::string>{}(key));
+        size_t h = 0;
+        for (const char c : key) {
+            h = (h * a + c) % p;
+        }
+        return h % size;
     }
 
     void initialize() {
@@ -63,17 +65,7 @@ class HashTable {
     }
 
 public:
-    HashTable() : size(100), elements(0) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<size_t> dis1(1, p - 1);
-        std::uniform_int_distribution<size_t> dis2(0, p - 1);
-        a = dis1(gen);
-        b = dis2(gen);
-        initialize();
-    }
-
-    explicit HashTable(const size_t size) : size(size), elements(0) {
+    HashTable() {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<size_t> dis1(1, p - 1);
