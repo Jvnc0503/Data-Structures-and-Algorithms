@@ -2,7 +2,6 @@
 #define HASHTABLE_H
 
 #include <random>
-#include <utility>
 
 template <typename T1, typename T2>
 struct Node {
@@ -18,8 +17,9 @@ class HashTable {
     Node<T1, T2>** table;
     size_t a;
     size_t b;
-    const size_t p = 1000000007;    //Large prime number
+    const size_t p = 1000000007;
     size_t size;
+    size_t elements;
 
     size_t hash(const T1& key) {
         return ((a * key + b) % p) % size;
@@ -50,28 +50,31 @@ class HashTable {
     }
 
     double loadFactor() {
-        size_t count = 0;
-        size_t maxCollision = 0;
-        for (size_t i = 0; i < size; ++i) {
-            size_t collision = 0;
-            Node<T1, T2>* current = table[i];
+        return static_cast<double>(elements) / size;
+    }
+
+    void rehash() {
+        size_t oldSize = size;
+        size *= 2;
+        Node<T1, T2>** oldTable = table;
+
+        initialize();
+        elements = 0;
+
+        for (size_t i = 0; i < oldSize; ++i) {
+            Node<T1, T2>* current = oldTable[i];
             while (current != nullptr) {
-                ++count;
-                ++collision;
-                current = current->next;
-            }
-            if (collision > maxCollision) {
-                maxCollision = collision;
+                (*this)[current->key] = current->value;
+                Node<T1, T2>* next = current->next;
+                delete current;
+                current = next;
             }
         }
-        if (count * maxCollision) {
-            return static_cast<double>(count) / (size * maxCollision);
-        }
-        return 0;
+        delete[] oldTable;
     }
 
 public:
-    HashTable() : size(100) {
+    HashTable() : size(100), elements(0) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<size_t> dis1(1, p - 1);
@@ -81,7 +84,7 @@ public:
         initialize();
     }
 
-    explicit HashTable(const size_t size) : size(size){
+    explicit HashTable(const size_t size) : size(size), elements(0) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<size_t> dis1(1, p - 1);
@@ -95,11 +98,15 @@ public:
         clear();
     }
 
-    T2& operator[](T1 key) {
+    T2& operator[](const T1& key) {
+        if (loadFactor() > 0.75) {
+            rehash();
+        }
         size_t index = hash(key);
         Node<T1, T2>* current = table[index];
         if (current == nullptr) {
             table[index] = new Node<T1, T2>(key);
+            ++elements;
             return table[index]->value;
         }
         while (current->key != key && current->next != nullptr) {
@@ -109,6 +116,7 @@ public:
             return current->value;
         }
         current->next = new Node<T1, T2>(key);
+        ++elements;
         return current->next->value;
     }
 };
