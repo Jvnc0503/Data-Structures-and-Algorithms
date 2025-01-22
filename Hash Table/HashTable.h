@@ -36,28 +36,17 @@ class HashTable {
         }
     }
 
-    void clear() {
-        for (size_t i = 0; i < size; ++i) {
-            Node<T1, T2>* current = table[i];
-            while (current != nullptr) {
-                Node<T1, T2>* next = current->next;
-                delete current;
-                current = next;
-            }
-        }
-        delete[] table;
-        table = nullptr;
-    }
-
     double loadFactor() {
-        return static_cast<double>(elements) / size;
+        if (size) {
+            return static_cast<double>(elements) / size;
+        }
+        return 0;
     }
 
     void rehash() {
-        size_t oldSize = size;
+        const size_t oldSize = size;
         size *= 2;
         Node<T1, T2>** oldTable = table;
-
         initialize();
         elements = 0;
 
@@ -95,7 +84,24 @@ public:
     }
 
     ~HashTable() {
-        clear();
+        erase();
+    }
+
+    void erase() {
+        for (size_t i = 0; i < size; ++i) {
+            Node<T1, T2>* current = table[i];
+            while (current != nullptr) {
+                Node<T1, T2>* next = current->next;
+                delete current;
+                current = next;
+            }
+        }
+        delete[] table;
+        table = nullptr;
+    }
+
+    bool empty() {
+        return elements == 0;
     }
 
     T2& operator[](const T1& key) {
@@ -118,6 +124,17 @@ public:
         current->next = new Node<T1, T2>(key);
         ++elements;
         return current->next->value;
+    }
+
+    bool isPresent(const T1& key) {
+        Node<T1, T2> current = table[hash(key)];
+        while (current != nullptr) {
+            if (current->key == key) {
+                return true;
+            }
+            current = current->next;
+        }
+        return false;
     }
 };
 
