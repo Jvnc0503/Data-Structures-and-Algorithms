@@ -24,11 +24,24 @@ class HashTable {
         return ((a * key + b) % p) % size;
     }
 
-    void initializeTable() {
+    void initialize() {
         table = new Node<T1, T2>*[size];
         for (size_t i = 0; i < size; ++i) {
             table[i] = nullptr;
         }
+    }
+
+    void clear() {
+        for (size_t i = 0; i < size; ++i) {
+            Node<T1, T2>* current = table[i];
+            while (current != nullptr) {
+                Node<T1, T2>* next = current->next;
+                delete current;
+                current = next;
+            }
+        }
+        delete[] table;
+        table = nullptr;
     }
 
     double loadFactor() {
@@ -53,31 +66,25 @@ public:
     HashTable() : size(100) {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<size_t> dis(0, p - 1);
-        a = dis(gen);
-        b = dis(gen);
-        initializeTable();
+        std::uniform_int_distribution<size_t> dis1(1, p - 1);
+        std::uniform_int_distribution<size_t> dis2(0, p - 1);
+        a = dis1(gen);
+        b = dis2(gen);
+        initialize();
     }
 
     explicit HashTable(const size_t size) : size(size){
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<size_t> dis(0, p - 1);
-        a = dis(gen);
-        b = dis(gen);
-        initializeTable();
+        std::uniform_int_distribution<size_t> dis1(1, p - 1);
+        std::uniform_int_distribution<size_t> dis2(0, p - 1);
+        a = dis1(gen);
+        b = dis2(gen);
+        initialize();
     }
 
     ~HashTable() {
-        for (size_t i = 0; i < size; ++i) {
-            Node<T1, T2>* current = table[i];
-            while (current != nullptr) {
-                Node<T1, T2>* next = current->next;
-                delete current;
-                current = next;
-            }
-        }
-        delete[] table;
+        clear();
     }
 
     T2& operator[](T1 key) {
