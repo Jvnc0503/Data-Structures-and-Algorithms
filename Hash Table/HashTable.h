@@ -45,7 +45,7 @@ class HashTable {
     }
 
     double loadFactor() {
-        double count = 0;
+        size_t count = 0;
         size_t maxCollision = 0;
         for (size_t i = 0; i < size; ++i) {
             size_t collision = 0;
@@ -59,7 +59,10 @@ class HashTable {
                 maxCollision = collision;
             }
         }
-        return count / (size * maxCollision);
+        if (count * maxCollision) {
+            return static_cast<double>(count) / (size * maxCollision);
+        }
+        return 0;
     }
 
 public:
