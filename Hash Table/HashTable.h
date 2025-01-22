@@ -84,16 +84,6 @@ public:
         initialize();
     }
 
-    explicit HashTable(const size_t size) : size(size), elements(0) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<size_t> dis1(1, p - 1);
-        std::uniform_int_distribution<size_t> dis2(0, p - 1);
-        a = dis1(gen);
-        b = dis2(gen);
-        initialize();
-    }
-
     ~HashTable() {
         clear();
     }
