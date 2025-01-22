@@ -127,7 +127,7 @@ public:
     }
 
     bool isPresent(const T1& key) {
-        Node<T1, T2> current = table[hash(key)];
+        Node<T1, T2>* current = table[hash(key)];
         while (current != nullptr) {
             if (current->key == key) {
                 return true;
