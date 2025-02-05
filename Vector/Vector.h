@@ -12,7 +12,7 @@ class Vector {
         capacity_ *= 2;
         T *temp = new T[capacity_];
         for (size_t i = 0; i < size_; ++i) {
-            temp[i] = arr[i];
+            temp[i] = std::move(arr[i]);
         }
         delete[] arr;
         arr = temp;
@@ -24,25 +24,27 @@ public:
     }
 
     ~Vector() {
+        clear();
         delete[] arr;
     }
 
-    Vector(const Vector &og): capacity_(og.capacity_), size_(og.size_) {
+    Vector(const Vector &other): capacity_(other.capacity_), size_(other.size_) {
         arr = new T[capacity_];
-        for (size_t i = 0; i < size; ++i) {
-            arr[i] = og.arr[i];
+        for (size_t i = 0; i < size_; ++i) {
+            arr[i] = other.arr[i];
         }
     }
 
     Vector &operator=(const Vector &other) {
-        if (this != other) {
+        if (this != &other) {
+            T *temp = new T[other.capacity_];
+            for (size_t i = 0; i < other.size_; ++i) {
+                temp[i] = other.arr[i];
+            }
             delete[] arr;
+            arr = temp;
             capacity_ = other.capacity_;
             size_ = other.size_;
-            arr = new T[capacity_];
-            for (size_t i = 0; i < size; ++i) {
-                arr[i] = other.arr[i];
-            }
         }
         return *this;
     }
@@ -51,16 +53,23 @@ public:
         if (size_ == capacity_) {
             resize();
         }
-        arr[size_++] = value;
+        arr[size_++] = std::move(value);
     }
 
     void pop_back() {
         if (size_ > 0) {
-            --size_;
+            arr[--size_].~T();
         }
     }
 
     T &operator[](const size_t &index) {
+        if (index >= size_) {
+            throw std::out_of_range("Index out of bounds");
+        }
+        return arr[index];
+    }
+
+    const T &operator[](const size_t &index) const {
         if (index >= size_) {
             throw std::out_of_range("Index out of bounds");
         }
@@ -80,7 +89,10 @@ public:
     }
 
     void clear() {
-        size_ = 0;
+        while (size > 0) {
+            pop_back();
+        }
+        size = 0;
     }
 };
 #endif
