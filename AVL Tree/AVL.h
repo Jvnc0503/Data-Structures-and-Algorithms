@@ -6,12 +6,11 @@
 template<typename T>
 struct Node {
     T val;
-    unsigned count;
-    short bal;
+    short balance = 0;
     Node *left;
     Node *right;
 
-    explicit Node(T val): val(val), count(1), bal(0), left(nullptr), right(nullptr) {
+    explicit Node(T val = 0, Node *left = nullptr, Node *right = nullptr): val(val), left(left), right(right) {
     }
 };
 
@@ -66,20 +65,27 @@ class AVL {
         std::queue<Node<T> *> q;
         q.push(p);
         while (!q.empty()) {
-            auto p = q.front();
+            auto temp = q.front();
             q.pop();
-            std::cout << p->val << ' ';
-            if (p->left != nullptr) {
-                q.push(p->left);
+            std::cout << temp->val << ' ';
+            if (temp->left != nullptr) {
+                q.push(temp->left);
             }
-            if (p->right != nullptr) {
-                q.push(p->right);
+            if (temp->right != nullptr) {
+                q.push(temp->right);
             }
         }
     }
 
 public:
     AVL(): root(nullptr) {
+    }
+
+    void insert(T val) {
+        if (root == nullptr) {
+            root = new Node(val);
+            return;
+        }
     }
 };
 
