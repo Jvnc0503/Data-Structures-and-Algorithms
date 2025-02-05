@@ -19,15 +19,18 @@ class Vector {
     }
 
 public:
+    //Constructor
     Vector() {
         arr = new T[capacity_];
     }
 
+    //Destructor
     ~Vector() {
         clear();
         delete[] arr;
     }
 
+    //Copy Constructor
     Vector(const Vector &other): capacity_(other.capacity_), size_(other.size_) {
         arr = new T[capacity_];
         for (size_t i = 0; i < size_; ++i) {
@@ -35,6 +38,14 @@ public:
         }
     }
 
+    //Move Constructor
+    Vector(Vector &&other) noexcept: arr(other.arr), capacity_(other.capacity_), size_(other.size_) {
+        other.arr = nullptr;
+        other.capacity_ = 0;
+        other.size_ = 0;
+    }
+
+    //Copy Assignment Operator
     Vector &operator=(const Vector &other) {
         if (this != &other) {
             T *temp = new T[other.capacity_];
@@ -49,7 +60,28 @@ public:
         return *this;
     }
 
+    //Move Assignment Operator
+    Vector &operator=(Vector &&other) noexcept {
+        if (this != &other) {
+            delete[] arr;
+            arr = other.arr;
+            capacity_ = other.capacity_;
+            size_ = other.size_;
+            other.arr = nullptr;
+            other.capacity_ = 0;
+            other.size_ = 0;
+        }
+        return *this;
+    }
+
     void push_back(const T &value) {
+        if (size_ == capacity_) {
+            resize();
+        }
+        arr[size_++] = value;
+    }
+
+    void push_back(T &&value) {
         if (size_ == capacity_) {
             resize();
         }
@@ -58,7 +90,7 @@ public:
 
     void pop_back() {
         if (size_ > 0) {
-            arr[--size_].~T();
+            std::destroy_at(&arr[--size_]);
         }
     }
 
@@ -89,10 +121,10 @@ public:
     }
 
     void clear() {
-        while (size > 0) {
+        while (size_ > 0) {
             pop_back();
         }
-        size = 0;
+        size_ = 0;
     }
 };
 #endif
