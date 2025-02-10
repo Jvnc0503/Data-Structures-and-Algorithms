@@ -2,6 +2,7 @@
 #define AVL_H
 #include <iostream>
 #include <queue>
+#include <stack>
 
 template<typename T>
 struct Node {
@@ -123,27 +124,32 @@ public:
         insertAux(root, val);
     }
 
-    void DFS(Node<T> *p) {
-        if (p == nullptr) {
-            return;
+    void DFS() {
+        std::stack<Node<T> *> s;
+        s.push(this->root);
+        while (!s.empty()) {
+            Node<T> *node = s.pop();
+            std::cout << node->val << ' ';
+            if (node->right) {
+                s.push(node->right);
+            }
+            if (node->left) {
+                s.push(node->left);
+            }
         }
-        DFS(p->left);
-        std::cout << p->val << ' ';
-        DFS(p->right);
     }
 
-    void BFS(Node<T> *p) {
+    void BFS() {
         std::queue<Node<T> *> q;
-        q.push(p);
+        q.push(this->root);
         while (!q.empty()) {
-            auto temp = q.front();
-            q.pop();
-            std::cout << temp->val << ' ';
-            if (temp->left != nullptr) {
-                q.push(temp->left);
+            Node<T> *node = q.pop();
+            std::cout << node->val << ' ';
+            if (node->left) {
+                q.push(node->left);
             }
-            if (temp->right != nullptr) {
-                q.push(temp->right);
+            if (node->right) {
+                q.push(node->right);
             }
         }
     }
