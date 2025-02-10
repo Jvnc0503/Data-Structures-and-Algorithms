@@ -74,6 +74,7 @@ public:
         return *this;
     }
 
+    //Copy push_back
     void push_back(const T &value) {
         if (size_ == capacity_) {
             resize();
@@ -81,6 +82,7 @@ public:
         arr[size_++] = value;
     }
 
+    //Move push_back
     void push_back(T &&value) {
         if (size_ == capacity_) {
             resize();
@@ -89,9 +91,10 @@ public:
     }
 
     void pop_back() {
-        if (size_ > 0) {
-            std::destroy_at(&arr[--size_]);
+        if (size_ == 0) {
+            throw std::out_of_range("Vector is empty");
         }
+        --size;
     }
 
     T &operator[](const size_t &index) {
