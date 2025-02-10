@@ -19,6 +19,15 @@ template<typename T>
 class AVL {
     Node<T> *root;
 
+    void deleteTree(Node<T> *node) {
+        if (node == nullptr) {
+            return;
+        }
+        deleteTree(node->left);
+        deleteTree(node->right);
+        delete node;
+    }
+
     Node<T> *LL(Node<T> *A) {
         Node<T> *B = A->left;
         A->left = B->right;
@@ -114,6 +123,10 @@ class AVL {
 
 public:
     AVL(): root(nullptr) {
+    }
+
+    ~AVL() {
+        deleteTree(root);
     }
 
     void insert(const T &val) {
