@@ -121,9 +121,21 @@ class AVL {
         }
     }
 
-public:
-    AVL(): root(nullptr) {
+    bool searchAux(Node<T> *node, const T &val) const {
+        if (node == nullptr) {
+            return false;
+        }
+        if (node->val == val) {
+            return true;
+        }
+        if (val < node->val) {
+            return searchAux(node->left, val);
+        }
+        return searchAux(node->right, val);
     }
+
+public:
+    AVL() = default;
 
     ~AVL() {
         deleteTree(root);
@@ -165,6 +177,14 @@ public:
                 q.push(node->right);
             }
         }
+    }
+
+    bool search(const T &val) const {
+        return searchAux(root, val);
+    }
+
+    void remove(const T &val) const {
+        //TODO
     }
 };
 
