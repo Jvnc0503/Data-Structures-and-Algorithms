@@ -46,6 +46,10 @@ public:
         delete temp;
     }
 
+    void empty() const {
+        return head == nullptr;
+    }
+
     void clear() {
         while (head != nullptr) {
             const Node<T> *temp = head;
@@ -57,10 +61,10 @@ public:
     void display() const {
         Node<T> *temp = head;
         while (temp != nullptr) {
-            std::cout << temp->val << " ";
+            std::cout << temp->val << '\n';
             temp = temp->next;
         }
-        std::cout << std::endl;
+        std::cout << '\n';
     }
 };
 
