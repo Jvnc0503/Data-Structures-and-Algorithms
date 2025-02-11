@@ -8,16 +8,6 @@ class Vector {
     size_t capacity_ = 1;
     size_t size_ = 0;
 
-    void resize() {
-        capacity_ *= 2;
-        T *temp = new T[capacity_];
-        for (size_t i = 0; i < size_; ++i) {
-            temp[i] = std::move(arr[i]);
-        }
-        delete[] arr;
-        arr = temp;
-    }
-
 public:
     //Constructor
     Vector() {
@@ -74,10 +64,20 @@ public:
         return *this;
     }
 
+    void resize(const size_t &new_capacity) {
+        capacity_ = new_capacity;
+        T *temp = new T[capacity_];
+        for (size_t i = 0; i < size_; ++i) {
+            temp[i] = std::move(arr[i]);
+        }
+        delete[] arr;
+        arr = temp;
+    }
+
     //Copy push_back
     void push_back(const T &value) {
         if (size_ == capacity_) {
-            resize();
+            resize(capacity_ * 2);
         }
         arr[size_++] = value;
     }
@@ -85,7 +85,7 @@ public:
     //Move push_back
     void push_back(T &&value) {
         if (size_ == capacity_) {
-            resize();
+            resize(capacity_ * 2);
         }
         arr[size_++] = std::move(value);
     }
@@ -94,7 +94,7 @@ public:
         if (size_ == 0) {
             throw std::out_of_range("Vector is empty");
         }
-        --size;
+        --size_;
     }
 
     T &operator[](const size_t &index) {

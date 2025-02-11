@@ -134,6 +134,14 @@ class AVL {
         return searchAux(node->right, val);
     }
 
+    void removeAux(Node<T> *node, const T &val) {
+        if (node == nullptr) {
+            throw std::runtime_error("Value not found");
+        }
+        if (val == node->val) {
+        }
+    }
+
 public:
     AVL() = default;
 
@@ -184,7 +192,7 @@ public:
     }
 
     void remove(const T &val) const {
-        //TODO
+        removeAux(root, val);
     }
 };
 
