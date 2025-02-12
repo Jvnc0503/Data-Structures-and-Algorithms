@@ -17,9 +17,9 @@ public:
         delete[] rank;
     }
 
-    int findSet(const int &x) const {
-        if (parent[x] == x) {
-            return x;
+    int findSet(const int &x) {
+        if (parent[x] != x) {
+            parent[x] = findSet(parent[x]);
         }
         return parent[x];
     }
