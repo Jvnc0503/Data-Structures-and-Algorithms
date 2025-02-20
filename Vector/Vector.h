@@ -9,18 +9,21 @@ class Vector {
     size_t size_ = 0;
 
 public:
-    //Constructor
     Vector() {
         arr = new T[capacity_];
     }
 
-    //Destructor
+    explicit Vector(const size_t &n, const T &initializer = T()): capacity_(n), size_(n) {
+        arr = new T[n];
+        for (size_t i = 0; i < n; ++i) {
+            arr[i] = initializer;
+        }
+    }
+
     ~Vector() {
-        clear();
         delete[] arr;
     }
 
-    //Copy Constructor
     Vector(const Vector &other): capacity_(other.capacity_), size_(other.size_) {
         arr = new T[capacity_];
         for (size_t i = 0; i < size_; ++i) {
@@ -28,29 +31,25 @@ public:
         }
     }
 
-    //Move Constructor
     Vector(Vector &&other) noexcept: arr(other.arr), capacity_(other.capacity_), size_(other.size_) {
         other.arr = nullptr;
         other.capacity_ = 0;
         other.size_ = 0;
     }
 
-    //Copy Assignment Operator
     Vector &operator=(const Vector &other) {
         if (this != &other) {
-            T *temp = new T[other.capacity_];
-            for (size_t i = 0; i < other.size_; ++i) {
-                temp[i] = other.arr[i];
-            }
             delete[] arr;
-            arr = temp;
             capacity_ = other.capacity_;
             size_ = other.size_;
+            arr = new T[capacity_];
+            for (size_t i = 0; i < size_; ++i) {
+                arr[i] = other.arr[i];
+            }
         }
         return *this;
     }
 
-    //Move Assignment Operator
     Vector &operator=(Vector &&other) noexcept {
         if (this != &other) {
             delete[] arr;
@@ -64,28 +63,38 @@ public:
         return *this;
     }
 
-    void resize(const size_t &new_capacity) {
-        capacity_ = new_capacity;
-        T *temp = new T[capacity_];
-        for (size_t i = 0; i < size_; ++i) {
-            temp[i] = std::move(arr[i]);
+    void reserve(const size_t &new_capacity) {
+        if (new_capacity > capacity_) {
+            T *temp = new T[new_capacity];
+            for (size_t i = 0; i < size_; ++i) {
+                temp[i] = std::move(arr[i]);
+            }
+            delete[] arr;
+            arr = temp;
+            capacity_ = new_capacity;
         }
-        delete[] arr;
-        arr = temp;
     }
 
-    //Copy push_back
+    void resize(const size_t &new_size, const T &initializer = T()) {
+        if (new_size > capacity_) {
+            reserve(new_size);
+        }
+        for (size_t i = size_; i < new_size; ++i) {
+            arr[i] = initializer;
+        }
+        size_ = new_size;
+    }
+
     void push_back(const T &value) {
         if (size_ == capacity_) {
-            resize(capacity_ * 2);
+            reserve(capacity_ * 2);
         }
         arr[size_++] = value;
     }
 
-    //Move push_back
     void push_back(T &&value) {
         if (size_ == capacity_) {
-            resize(capacity_ * 2);
+            reserve(capacity_ * 2);
         }
         arr[size_++] = std::move(value);
     }
@@ -124,9 +133,6 @@ public:
     }
 
     void clear() {
-        while (size_ > 0) {
-            pop_back();
-        }
         size_ = 0;
     }
 };
