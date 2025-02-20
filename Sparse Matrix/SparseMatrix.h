@@ -17,15 +17,13 @@ struct Node {
 
 template<typename T>
 class SparseMatrix {
-    std::vector<Node<T> *> rows;
-    std::vector<Node<T> *> cols;
     size_t n_rows;
     size_t n_cols;
+    std::vector<Node<T> *> rows;
+    std::vector<Node<T> *> cols;
 
 public:
-    SparseMatrix(const size_t &n_rows, const size_t &n_cols)
-        : rows(n_rows, nullptr), cols(n_cols, nullptr), n_rows(n_rows),
-          n_cols(n_cols) {
+    SparseMatrix(const size_t &r, const size_t &c): n_rows(r), n_cols(c), rows(r, nullptr), cols(c, nullptr) {
     }
 
     ~SparseMatrix() {
@@ -39,7 +37,26 @@ public:
         }
     }
 
+    size_t numRows() const {
+        return n_rows;
+    }
+
+    size_t numCols() const {
+        return n_cols;
+    }
+
     Node<T> *search(const size_t &i, const size_t &j) const {
+        if (i < 0 || i >= n_rows || j < 0 || j >= n_cols) {
+            return nullptr;
+        }
+        Node<T> *rowHead = rows[i];
+        while (rowHead && rowHead->pos_col < j) {
+            rowHead = rowHead->next_col;
+        }
+        if (rowHead && rowHead->pos_col == j) {
+            return rowHead;
+        }
+        return nullptr;
     }
 
     void insert(const size_t &i, const size_t &j, const T &value) {
