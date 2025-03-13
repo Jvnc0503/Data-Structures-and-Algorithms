@@ -8,6 +8,12 @@ class Vector {
     size_t capacity_;
     size_t size_;
 
+    void init_default() {
+        capacity_ = 1;
+        size_ = 0;
+        arr = new T[capacity_];
+    }
+
 public:
     Vector() : arr(new T[1]), capacity_(1), size_(0) {
     }
@@ -31,9 +37,7 @@ public:
 
     Vector(Vector &&other) noexcept
         : arr(other.arr), capacity_(other.capacity_), size_(other.size_) {
-        other.arr = nullptr;
-        other.capacity_ = 0;
-        other.size_ = 0;
+        other.init_default();
     }
 
     Vector(const std::initializer_list<T> &init) : arr(new T[init.size()]), capacity_(init.size()), size_(init.size()) {
@@ -62,9 +66,7 @@ public:
             arr = other.arr;
             capacity_ = other.capacity_;
             size_ = other.size_;
-            other.arr = nullptr;
-            other.capacity_ = 0;
-            other.size_ = 0;
+            other.init_default();
         }
         return *this;
     }
@@ -152,6 +154,18 @@ public:
             arr[i].~T();
         }
         size_ = 0;
+    }
+
+    void shrink_to_fit() {
+        if (size_ < capacity_) {
+            T *temp = new T[size_];
+            for (size_t i = 0; i < size_; ++i) {
+                temp[i] = std::move(arr[i]);
+            }
+            delete[] arr;
+            arr = temp;
+            capacity_ = size_;
+        }
     }
 };
 #endif
