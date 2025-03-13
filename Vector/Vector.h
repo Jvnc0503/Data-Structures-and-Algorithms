@@ -36,6 +36,13 @@ public:
         other.size_ = 0;
     }
 
+    Vector(const std::initializer_list<T> &init) : capacity_(init.size()), size_(init.size()), arr(new T[init.size()]) {
+        size_t i = 0;
+        for (const T &val: init) {
+            arr[i++] = val;
+        }
+    }
+
     Vector &operator=(const Vector &other) {
         if (this != &other) {
             delete[] arr;
