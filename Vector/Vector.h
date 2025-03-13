@@ -105,6 +105,15 @@ public:
         arr[size_++] = std::move(value);
     }
 
+    template<typename... Ts>
+    void emplace_back(Ts &&... args) {
+        if (size_ == capacity_) {
+            reserve(capacity_ * 2);
+        }
+        new(arr + size_) T(std::forward<Ts>(args)...);
+        ++size_;
+    }
+
     void pop_back() {
         if (size_ == 0) {
             throw std::out_of_range("Vector is empty");
