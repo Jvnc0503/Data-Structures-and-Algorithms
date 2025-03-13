@@ -87,8 +87,14 @@ public:
         if (new_size > capacity_) {
             reserve(new_size);
         }
-        for (size_t i = size_; i < new_size; ++i) {
-            arr[i] = val;
+        if (new_size > size_) {
+            for (size_t i = size_; i < new_size; ++i) {
+                arr[i] = val;
+            }
+        } else if (new_size < size_) {
+            for (size_t i = new_size; i < size_; ++i) {
+                arr[i].~T();
+            }
         }
         size_ = new_size;
     }
