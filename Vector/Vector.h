@@ -36,7 +36,7 @@ public:
         other.size_ = 0;
     }
 
-    Vector(const std::initializer_list<T> &init) : capacity_(init.size()), size_(init.size()), arr(new T[init.size()]) {
+    Vector(const std::initializer_list<T> &init) : arr(new T[init.size()]), capacity_(init.size()), size_(init.size()) {
         size_t i = 0;
         for (const T &val: init) {
             arr[i++] = val;
