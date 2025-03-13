@@ -5,18 +5,16 @@
 template<typename T>
 class Vector {
     T *arr;
-    size_t capacity_ = 1;
-    size_t size_ = 0;
+    size_t capacity_;
+    size_t size_;
 
 public:
-    Vector() {
-        arr = new T[capacity_];
+    Vector() : arr(new T[1]), capacity_(1), size_(0) {
     }
 
-    explicit Vector(const size_t &n, const T &initializer = T()): capacity_(n), size_(n) {
-        arr = new T[n];
+    explicit Vector(const size_t &n, const T &val = T()): capacity_(n), size_(n), arr(new T[n]) {
         for (size_t i = 0; i < n; ++i) {
-            arr[i] = initializer;
+            arr[i] = val;
         }
     }
 
@@ -31,7 +29,8 @@ public:
         }
     }
 
-    Vector(Vector &&other) noexcept: arr(other.arr), capacity_(other.capacity_), size_(other.size_) {
+    Vector(Vector &&other) noexcept
+        : arr(other.arr), capacity_(other.capacity_), size_(other.size_) {
         other.arr = nullptr;
         other.capacity_ = 0;
         other.size_ = 0;
@@ -75,12 +74,12 @@ public:
         }
     }
 
-    void resize(const size_t &new_size, const T &initializer = T()) {
+    void resize(const size_t &new_size, const T &val = T()) {
         if (new_size > capacity_) {
             reserve(new_size);
         }
         for (size_t i = size_; i < new_size; ++i) {
-            arr[i] = initializer;
+            arr[i] = val;
         }
         size_ = new_size;
     }
@@ -103,7 +102,7 @@ public:
         if (size_ == 0) {
             throw std::out_of_range("Vector is empty");
         }
-        --size_;
+        arr[--size_].~T();
     }
 
     T &operator[](const size_t &index) {
@@ -133,6 +132,9 @@ public:
     }
 
     void clear() {
+        for (size_t i = 0; i < size_; ++i) {
+            arr[i].~T();
+        }
         size_ = 0;
     }
 };
