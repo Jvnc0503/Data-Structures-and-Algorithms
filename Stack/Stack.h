@@ -23,6 +23,9 @@ public:
     Stack() = default;
 
     Stack(const Stack &other) {
+        if (this == &other) {
+            return;
+        }
         if (!other.head) {
             head = nullptr;
             return;
