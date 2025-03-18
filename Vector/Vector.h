@@ -18,7 +18,7 @@ public:
     Vector() : arr(new T[1]), capacity_(1), size_(0) {
     }
 
-    explicit Vector(const size_t &n, const T &val = T()): capacity_(n), size_(n), arr(new T[n]) {
+    explicit Vector(const size_t &n, const T &val = T()): arr(new T[n]), capacity_(n), size_(n) {
         for (size_t i = 0; i < n; ++i) {
             arr[i] = val;
         }
