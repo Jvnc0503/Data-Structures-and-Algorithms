@@ -38,12 +38,32 @@ public:
         }
     }
 
+    template<typename... Ts>
+    explicit Stack(Ts... args) {
+        (push(std::forward<Ts>(args)), ...);
+    }
+
+    Stack(Stack &&other) noexcept {
+        head = other.head;
+        other.head = nullptr;
+    }
+
     ~Stack() {
         clear();
     }
 
     void push(const T &val) {
         head = new Node<T>(val, head);
+    }
+
+    template<typename... Ts>
+    void push(Ts... args) {
+        (push(std::forward<Ts>(args)), ...);
+    }
+
+    template<typename... Ts>
+    void emplace(T &&args) {
+        head = new Node<T>(T(std::forward<Ts>(args)), head);
     }
 
     T top() const {
