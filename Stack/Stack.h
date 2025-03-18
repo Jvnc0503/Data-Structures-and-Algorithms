@@ -56,9 +56,10 @@ public:
         head = new Node<T>(val, head);
     }
 
-    template<typename... Ts>
-    void push(Ts... args) {
-        (push(std::forward<Ts>(args)), ...);
+    template<typename T2, typename... Ts>
+    void push(T2 arg, Ts... args) {
+        push(arg);
+        push(args...);
     }
 
     template<typename... Ts>
@@ -82,7 +83,7 @@ public:
         delete temp;
     }
 
-    bool empty() const {
+    [[nodiscard]] bool empty() const {
         return head == nullptr;
     }
 
