@@ -38,11 +38,6 @@ public:
         }
     }
 
-    template<typename... Ts>
-    explicit Stack(Ts... args) {
-        (push(std::forward<Ts>(args)), ...);
-    }
-
     Stack(Stack &&other) noexcept {
         head = other.head;
         other.head = nullptr;
