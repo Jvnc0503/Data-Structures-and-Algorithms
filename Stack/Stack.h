@@ -22,6 +22,19 @@ class Stack {
 public:
     Stack() = default;
 
+    Stack(const Stack &other) {
+        if (!other.head) {
+            head = nullptr;
+            return;
+        }
+        head = new Node<T>(other.head->val);
+        Node<T> *current = head;
+        for (Node<T> *temp = other.head->next; temp != nullptr; temp = temp->next) {
+            current->next = new Node<T>(temp->val);
+            current = current->next;
+        }
+    }
+
     ~Stack() {
         clear();
     }
