@@ -51,18 +51,24 @@ public:
         head = new Node<T>(val, head);
     }
 
-    template<typename T2, typename... Ts>
-    void push(T2 arg, Ts... args) {
-        push(arg);
-        push(args...);
+    template<typename... Ts>
+    void push(Ts &&... args) {
+        (push(std::forward<Ts>(args)), ...);
     }
 
     template<typename... Ts>
-    void emplace(T &&args) {
-        head = new Node<T>(T(std::forward<Ts>(args)), head);
+    void emplace(Ts &&... args) {
+        head = new Node<T>(std::forward<Ts>(args)..., head);
     }
 
-    T top() const {
+    T &top() {
+        if (head == nullptr) {
+            throw std::out_of_range("Stack is empty");
+        }
+        return head->val;
+    }
+
+    const T &top() const {
         if (head == nullptr) {
             throw std::out_of_range("Stack is empty");
         }
@@ -90,13 +96,15 @@ public:
         }
     }
 
-    void display() const {
-        const Node<T> *temp = head;
-        while (temp != nullptr) {
-            std::cout << temp->val << '\n';
+    friend std::ostream &operator<<(std::ostream &os, const Stack &stack) {
+        const Node<T> *temp = stack.head;
+        os << "Stack [ ";
+        while (temp) {
+            os << temp->val << ' ';
             temp = temp->next;
         }
-        std::cout << '\n';
+        os << "]";
+        return os;
     }
 };
 
