@@ -9,9 +9,9 @@ class Vector {
     size_t size_;
 
     void init_default() {
-        capacity_ = 1;
+        arr = nullptr;
+        capacity_ = 0;
         size_ = 0;
-        arr = new T[capacity_];
     }
 
 public:
@@ -101,14 +101,14 @@ public:
 
     void push_back(const T &value) {
         if (size_ == capacity_) {
-            reserve(capacity_ * 2);
+            reserve(capacity_ == 0 ? 1 : capacity_ * 2);
         }
         arr[size_++] = value;
     }
 
     void push_back(T &&value) {
         if (size_ == capacity_) {
-            reserve(capacity_ * 2);
+            reserve(capacity_ == 0 ? 1 : capacity_ * 2);
         }
         arr[size_++] = std::move(value);
     }
@@ -116,7 +116,7 @@ public:
     template<typename... Ts>
     void emplace_back(Ts &&... args) {
         if (size_ == capacity_) {
-            reserve(capacity_ * 2);
+            reserve(capacity_ == 0 ? 1 : capacity_ * 2);
         }
         new(arr + size_) T(std::forward<Ts>(args)...);
         ++size_;
