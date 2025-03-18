@@ -41,25 +41,25 @@ public:
         if (head == nullptr) {
             throw std::out_of_range("Stack is empty");
         }
-        const Node<T> *temp = head;
+        Node<T> *temp = head;
         head = head->next;
         delete temp;
     }
 
-    void empty() const {
+    bool empty() const {
         return head == nullptr;
     }
 
     void clear() {
         while (head != nullptr) {
-            const Node<T> *temp = head;
+            Node<T> *temp = head;
             head = head->next;
             delete temp;
         }
     }
 
     void display() const {
-        Node<T> *temp = head;
+        const Node<T> *temp = head;
         while (temp != nullptr) {
             std::cout << temp->val << '\n';
             temp = temp->next;
