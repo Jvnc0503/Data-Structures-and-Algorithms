@@ -99,18 +99,17 @@ public:
         size_ = new_size;
     }
 
-    void push_back(const T &value) {
+    template<typename U>
+    void push_back(U &&value) {
         if (size_ == capacity_) {
             reserve(capacity_ == 0 ? 1 : capacity_ * 2);
         }
-        arr[size_++] = value;
+        arr[size_++] = std::forward<U>(value);
     }
 
-    void push_back(T &&value) {
-        if (size_ == capacity_) {
-            reserve(capacity_ == 0 ? 1 : capacity_ * 2);
-        }
-        arr[size_++] = std::move(value);
+    template<typename... Ts>
+    void push_back(Ts &&... args) {
+        (..., push_back(std::forward<Ts>(args)));
     }
 
     template<typename... Ts>
