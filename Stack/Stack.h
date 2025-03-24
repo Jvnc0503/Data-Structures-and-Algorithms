@@ -1,5 +1,6 @@
 #ifndef STACK_H
 #define STACK_H
+
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -30,7 +31,7 @@ public:
         }
         head = new Node<T>(other.head->val);
         Node<T> *current = head;
-        for (Node<T> *temp = other.head->next; temp != nullptr; temp = temp->next) {
+        for (Node<T> *temp = other.head->next; temp; temp = temp->next) {
             current->next = new Node<T>(temp->val);
             current = current->next;
         }
@@ -49,7 +50,7 @@ public:
         }
         head = new Node<T>(other.head->val);
         Node<T> *current = head;
-        for (Node<T> *temp = other.head->next; temp != nullptr; temp = temp->next) {
+        for (Node<T> *temp = other.head->next; temp; temp = temp->next) {
             current->next = new Node<T>(temp->val);
             current = current->next;
         }
@@ -75,7 +76,7 @@ public:
 
     template<typename... Ts>
     void push(Ts &&... args) {
-        (push(std::forward<Ts>(args)), ...);
+        (..., push(std::forward<Ts>(args)));
     }
 
     template<typename... Ts>
@@ -84,23 +85,17 @@ public:
     }
 
     T &top() {
-        if (head == nullptr) {
-            throw std::out_of_range("Stack is empty");
-        }
+        if (!head) throw std::out_of_range("Stack is empty");
         return head->val;
     }
 
     const T &top() const {
-        if (head == nullptr) {
-            throw std::out_of_range("Stack is empty");
-        }
+        if (!head) throw std::out_of_range("Stack is empty");
         return head->val;
     }
 
     void pop() {
-        if (head == nullptr) {
-            throw std::out_of_range("Stack is empty");
-        }
+        if (!head) throw std::out_of_range("Stack is empty");
         Node<T> *temp = head;
         head = head->next;
         delete temp;
@@ -111,8 +106,8 @@ public:
     }
 
     void clear() {
-        while (head != nullptr) {
-            Node<T> *temp = head;
+        while (head) {
+            const Node<T> *temp = head;
             head = head->next;
             delete temp;
         }
