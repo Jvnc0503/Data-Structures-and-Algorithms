@@ -151,15 +151,15 @@ public:
         return arr[index];
     }
 
-    size_t size() const {
+    [[nodiscard]] size_t size() const {
         return size_;
     }
 
-    size_t capacity() const {
+    [[nodiscard]] size_t capacity() const {
         return capacity_;
     }
 
-    bool empty() const {
+    [[nodiscard]] bool empty() const {
         return size_ == 0;
     }
 
