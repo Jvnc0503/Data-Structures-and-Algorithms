@@ -8,17 +8,27 @@ class Vector {
     size_t capacity_;
     size_t size_;
 
-    void init_default() {
+    void init_empty() {
         arr = nullptr;
         capacity_ = 0;
         size_ = 0;
     }
 
-public:
-    Vector() : arr(new T[1]), capacity_(1), size_(0) {
+    void reallocate(const size_t& new_capacity) {
+        T* new_arr = new T[new_capacity]{};
+        for (size_t i = 0; i < size; ++i) {
+            new_arr = std::move(arr[i]);
+        }
+        delete[] arr;
+        arr = new_arr;
+        capacity_ = new_capacity;
     }
 
-    explicit Vector(const size_t &n, const T &val = T()): arr(new T[n]), capacity_(n), size_(n) {
+public:
+    Vector() : arr(new T[1]{}), capacity_(1), size_(0) {
+    }
+
+    explicit Vector(const size_t &n, const T &val = T()): arr(new T[n]{}), capacity_(n), size_(n) {
         for (size_t i = 0; i < n; ++i) {
             arr[i] = val;
         }
@@ -28,8 +38,7 @@ public:
         delete[] arr;
     }
 
-    Vector(const Vector &other): capacity_(other.capacity_), size_(other.size_) {
-        arr = new T[capacity_];
+    Vector(const Vector &other): arr(new T[other.capacity_]{}),capacity_(other.capacity_), size_(other.size_) {
         for (size_t i = 0; i < size_; ++i) {
             arr[i] = other.arr[i];
         }
@@ -37,10 +46,10 @@ public:
 
     Vector(Vector &&other) noexcept
         : arr(other.arr), capacity_(other.capacity_), size_(other.size_) {
-        other.init_default();
+        other.init_empty();
     }
 
-    Vector(const std::initializer_list<T> &init) : arr(new T[init.size()]), capacity_(init.size()), size_(init.size()) {
+    Vector(const std::initializer_list<T> &init) : arr(new T[init.size()]{}), capacity_(init.size()), size_(init.size()) {
         size_t i = 0;
         for (const T &val: init) {
             arr[i++] = val;
@@ -52,7 +61,7 @@ public:
             delete[] arr;
             capacity_ = other.capacity_;
             size_ = other.size_;
-            arr = new T[capacity_];
+            arr = new T[capacity_]{};
             for (size_t i = 0; i < size_; ++i) {
                 arr[i] = other.arr[i];
             }
@@ -66,20 +75,14 @@ public:
             arr = other.arr;
             capacity_ = other.capacity_;
             size_ = other.size_;
-            other.init_default();
+            other.init_empty();
         }
         return *this;
     }
 
     void reserve(const size_t &new_capacity) {
         if (new_capacity > capacity_) {
-            T *temp = new T[new_capacity];
-            for (size_t i = 0; i < size_; ++i) {
-                temp[i] = std::move(arr[i]);
-            }
-            delete[] arr;
-            arr = temp;
-            capacity_ = new_capacity;
+            reallocate(new_capacity);
         }
     }
 
@@ -99,12 +102,18 @@ public:
         size_ = new_size;
     }
 
-    template<typename U>
-    void push_back(U &&value) {
+    void push_back(const T &value) {
         if (size_ == capacity_) {
             reserve(capacity_ == 0 ? 1 : capacity_ * 2);
         }
-        arr[size_++] = std::forward<U>(value);
+        arr[size_++] = value;
+    }
+
+    void push_back(T &&value) {
+        if (size_ == capacity_) {
+            reserve(capacity_ == 0 ? 1 : capacity_ * 2);
+        }
+        arr[size_++] = std::move(value);
     }
 
     template<typename... Ts>
