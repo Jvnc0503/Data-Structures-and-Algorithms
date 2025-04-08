@@ -1,6 +1,7 @@
 #ifndef BST_H
 #define BST_H
 #include <algorithm>
+#include <stdexcept>
 
 template<typename T>
 struct Node {
@@ -49,17 +50,21 @@ class BST {
     }
 
     Node<T> *&findMin(Node<T> *&node) {
-        if (node->left == nullptr) {
-            return node;
+        if (!node) {
+            throw std::runtime_error("Tree is empty");
         }
-        return findMin(node->left);
+        return node->left ? findMin(node->left) : node;
     }
 
     Node<T> *&findMax(Node<T> *&node) {
-        if (node->right == nullptr) {
-            return node;
+        if (!node) {
+            throw std::runtime_error("Tree is empty");
         }
-        return findMax(node->right);
+        return node->right ? findMax(node->right) : node;
+    }
+
+    Node<T> *&findSucessor(Node<T> *&node) {
+        return findMin(node->right);
     }
 
     bool remove(Node<T> *&node, const T &value) {
@@ -87,7 +92,7 @@ class BST {
             temp->left = nullptr;
             delete temp;
         } else {
-            Node<T> *successor = findMin(node->right);
+            Node<T> *successor = findSucessor(node);
             node->val = successor->val;
             Node<T> *temp = successor;
             successor = successor->right;
@@ -108,6 +113,12 @@ public:
     BST() : root(nullptr) {
     }
 
+    BST(std::initializer_list<T> list) : root(nullptr) {
+        for (const auto &value: list) {
+            insert(value);
+        }
+    }
+
     ~BST() {
         delete root;
     }
@@ -116,7 +127,7 @@ public:
         return insert(root, value);
     }
 
-    bool search(const T &value) {
+    bool search(const T &value) const {
         return search(root, value);
     }
 
@@ -124,15 +135,15 @@ public:
         return remove(root, value);
     }
 
-    size_t height() {
+    size_t height() const {
         return height(root);
     }
 
-    T findMin() {
+    T findMin() const {
         return findMin(root)->val;
     }
 
-    T findMax() {
+    T findMax() const {
         return findMax(root)->val;
     }
 };
