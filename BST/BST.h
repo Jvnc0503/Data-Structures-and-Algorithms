@@ -55,7 +55,7 @@ class BST {
         return findMin(node->left);
     }
 
-    Node<T>*& findMax(Node<T> *&node) {
+    Node<T> *&findMax(Node<T> *&node) {
         if (node->right == nullptr) {
             return node;
         }
