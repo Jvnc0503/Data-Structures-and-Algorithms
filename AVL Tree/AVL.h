@@ -1,7 +1,6 @@
 #ifndef AVL_H
 #define AVL_H
 #include <iostream>
-#include <queue>
 #include <stack>
 
 template<typename T>
@@ -116,12 +115,29 @@ class AVL {
         return balance(node);
     }
 
+    bool search(Node<T> *node, const T &val) const {
+        if (node == nullptr) {
+            return false;
+        }
+        if (node->val == val) {
+            return true;
+        }
+        if (val < node->val) {
+            return search(node->left, val);
+        }
+        return search(node->right, val);
+    }
+
 public:
     AVL() : root(nullptr) {
     }
 
     void insert(const T &val) {
         root = insert(root, val);
+    }
+
+    bool search(const T &val) const {
+        return search(root, val);
     }
 };
 
