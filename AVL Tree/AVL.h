@@ -30,6 +30,12 @@ class AVL {
     }
 
     Node<T> *LL(Node<T> *A) {
+        Node<T> *B = A->left;
+        A->left = B->right;
+        B->right = A;
+        updateHeight(A);
+        updateHeight(B);
+        return B;
     }
 
     Node<T> *RR(Node<T> *A) {
@@ -69,6 +75,7 @@ class AVL {
             node->right = insert(node->right, val);
         }
         updateHeight(node);
+        return balance(node);
     }
 
 public:
