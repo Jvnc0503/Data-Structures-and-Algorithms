@@ -29,6 +29,7 @@ class AVL {
         return node ? getHeight(node->left) - getHeight(node->right) : 0;
     }
 
+    //Rotation for LL insertion
     Node<T> *LL(Node<T> *A) {
         Node<T> *B = A->left;
         A->left = B->right;
@@ -38,13 +39,42 @@ class AVL {
         return B;
     }
 
+    //Rotation for RR insertion
     Node<T> *RR(Node<T> *A) {
+        Node<T> *B = A->right;
+        A->right = B->left;
+        B->left = A;
+        updateHeight(A);
+        updateHeight(B);
+        return B;
     }
 
+    //Rotation for LR insertion
     Node<T> *LR(Node<T> *A) {
+        Node<T> *B = A->left;
+        Node<T> *C = B->right;
+        B->right = C->left;
+        C->left = B;
+        A->left = C->right;
+        C->right = A;
+        updateHeight(A);
+        updateHeight(B);
+        updateHeight(C);
+        return C;
     }
 
+    //Rotation for RL insertion
     Node<T> *RL(Node<T> *A) {
+        Node<T> *B = A->right;
+        Node<T> *C = B->left;
+        B->left = C->right;
+        C->right = B;
+        A->right = C->left;
+        C->left = A;
+        updateHeight(A);
+        updateHeight(B);
+        updateHeight(C);
+        return C;
     }
 
     Node<T> *balance(Node<T> *node) {
@@ -68,6 +98,10 @@ class AVL {
     Node<T> *insert(Node<T> *node, const T &val) {
         if (node == nullptr) {
             return new Node<T>(val);
+        }
+        if (node->val == val) {
+            std::cout << "Duplicate value: " << val << '\n';
+            return node;
         }
         if (val < node->val) {
             node->left = insert(node->left, val);
