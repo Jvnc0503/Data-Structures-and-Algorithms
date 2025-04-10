@@ -128,11 +128,40 @@ class AVL {
         return search(node->right, val);
     }
 
+    Node<T> *minValNode(Node<T> *node) const {
+        return node->left ? minValNode(node->left) : node;
+    }
+
     Node<T> *remove(Node<T> *node, const T &val) {
         if (node == nullptr) {
             std::cout << "Deletion failed, value not found.\n";
             return nullptr;
         }
+        if (val < node->val) {
+            node->left = remove(node->left, val);
+        } else if (val > node->val) {
+            node->right = remove(node->right, val);
+        } else {
+            if (node->left == nullptr && node->right == nullptr) {
+                delete node;
+                return nullptr;
+            }
+            if (node->left == nullptr) {
+                Node<T> *temp = node->right;
+                delete node;
+                return temp;
+            }
+            if (node->right == nullptr) {
+                Node<T> *temp = node->left;
+                delete node;
+                return temp;
+            }
+            Node<T> *successor = minValNode(node->right);
+            node->val = successor->val;
+            node->right = remove(node->right, successor->val);
+        }
+        updateHeight(node);
+        return balance(node);
     }
 
 public:
