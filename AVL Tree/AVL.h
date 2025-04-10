@@ -19,6 +19,10 @@ template<typename T>
 class AVL {
     Node<T> *root;
 
+    int getHeigh(Node<T> *node) const {
+        return node ? node->height : 0;
+    }
+
     void updateHeight(Node<T> *node) const {
         if (node) {
             node->height = 1 + std::max(getHeight(node->left), getHeight(node->right));
