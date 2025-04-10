@@ -128,6 +128,13 @@ class AVL {
         return search(node->right, val);
     }
 
+    Node<T> *remove(Node<T> *node, const T &val) {
+        if (node == nullptr) {
+            std::cout << "Deletion failed, value not found.\n";
+            return nullptr;
+        }
+    }
+
 public:
     AVL() : root(nullptr) {
     }
@@ -138,6 +145,10 @@ public:
 
     bool search(const T &val) const {
         return search(root, val);
+    }
+
+    void remove(const T &val) {
+        root = remove(root, val);
     }
 };
 
