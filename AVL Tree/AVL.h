@@ -1,7 +1,8 @@
 #ifndef AVL_H
 #define AVL_H
 #include <iostream>
-#include <stack>
+#include <algorithm>
+#include <queue>
 
 template<typename T>
 struct Node {
@@ -30,7 +31,7 @@ class AVL {
     }
 
     static int getHeight(Node<T> *node) {
-        return node ? node->height : 0;
+        return node ? node->height : -1;
     }
 
     void updateHeight(Node<T> *node) const {
@@ -184,15 +185,6 @@ class AVL {
         DFS(node->right);
     }
 
-    void BFS(Node<T> *node) {
-        if (node == nullptr) {
-            return;
-        }
-        std::cout << node->val << ' ';
-        BFS(node->left);
-        BFS(node->right);
-    }
-
 public:
     AVL() : root(nullptr) {
     }
@@ -224,8 +216,29 @@ public:
     }
 
     void BFS() {
-        BFS(root);
-        std::cout << '\n';
+        if (root == nullptr) {
+            std::cout << "Tree is empty\n";
+            return;
+        }
+        std::cout << "BFS Traversal:\n";
+        std::queue<Node<T> *> q;
+        q.push(root);
+        while (!q.empty()) {
+            int levelSize = q.size();
+            for (size_t i = 0; i < levelSize; ++i) {
+                Node<T> *node = q.front();
+                q.pop();
+                std::cout << node->val << ' ';
+                if (node->left) {
+                    q.push(node->left);
+                }
+                if (node->right) {
+                    q.push(node->right);
+                }
+            }
+            std::cout << '\n';
+        }
+        std::cout << "End of BFS\n\n";
     }
 };
 
