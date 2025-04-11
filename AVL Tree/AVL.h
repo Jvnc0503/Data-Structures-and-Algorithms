@@ -12,13 +12,24 @@ struct Node {
 
     explicit Node(const T &val): val(val), height(0), left(nullptr), right(nullptr) {
     }
+
+    ~Node() = default;
 };
 
 template<typename T>
 class AVL {
     Node<T> *root;
 
-    int getHeigh(Node<T> *node) const {
+    void destroy(Node<T> *node) {
+        if (node == nullptr) {
+            return;
+        }
+        destroy(node->left);
+        destroy(node->right);
+        delete node;
+    }
+
+    static int getHeight(Node<T> *node) {
         return node ? node->height : 0;
     }
 
@@ -164,12 +175,39 @@ class AVL {
         return balance(node);
     }
 
+    void DFS(Node<T> *node) {
+        if (node == nullptr) {
+            return;
+        }
+        DFS(node->left);
+        std::cout << node->val << ' ';
+        DFS(node->right);
+    }
+
+    void BFS(Node<T> *node) {
+        if (node == nullptr) {
+            return;
+        }
+        std::cout << node->val << ' ';
+        BFS(node->left);
+        BFS(node->right);
+    }
+
 public:
     AVL() : root(nullptr) {
     }
 
+    ~AVL() {
+        destroy(root);
+    }
+
     void insert(const T &val) {
         root = insert(root, val);
+    }
+
+    template<typename... Ts>
+    void insert(Ts... vals) {
+        (insert(vals), ...);
     }
 
     bool search(const T &val) const {
@@ -178,6 +216,16 @@ public:
 
     void remove(const T &val) {
         root = remove(root, val);
+    }
+
+    void DFS() {
+        DFS(root);
+        std::cout << '\n';
+    }
+
+    void BFS() {
+        BFS(root);
+        std::cout << '\n';
     }
 };
 
