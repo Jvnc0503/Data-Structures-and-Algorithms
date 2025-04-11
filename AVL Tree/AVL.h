@@ -1,7 +1,8 @@
 #ifndef AVL_H
 #define AVL_H
 #include <iostream>
-#include <stack>
+#include <algorithm>
+#include <queue>
 
 template<typename T>
 struct Node {
@@ -12,14 +13,25 @@ struct Node {
 
     explicit Node(const T &val): val(val), height(0), left(nullptr), right(nullptr) {
     }
+
+    ~Node() = default;
 };
 
 template<typename T>
 class AVL {
     Node<T> *root;
 
-    int getHeigh(Node<T> *node) const {
-        return node ? node->height : 0;
+    void destroy(Node<T> *node) {
+        if (node == nullptr) {
+            return;
+        }
+        destroy(node->left);
+        destroy(node->right);
+        delete node;
+    }
+
+    static int getHeight(Node<T> *node) {
+        return node ? node->height : -1;
     }
 
     void updateHeight(Node<T> *node) const {
@@ -164,12 +176,30 @@ class AVL {
         return balance(node);
     }
 
+    void DFS(Node<T> *node) {
+        if (node == nullptr) {
+            return;
+        }
+        DFS(node->left);
+        std::cout << node->val << ' ';
+        DFS(node->right);
+    }
+
 public:
     AVL() : root(nullptr) {
     }
 
+    ~AVL() {
+        destroy(root);
+    }
+
     void insert(const T &val) {
         root = insert(root, val);
+    }
+
+    template<typename... Ts>
+    void insert(Ts... vals) {
+        (insert(vals), ...);
     }
 
     bool search(const T &val) const {
@@ -178,6 +208,37 @@ public:
 
     void remove(const T &val) {
         root = remove(root, val);
+    }
+
+    void DFS() {
+        DFS(root);
+        std::cout << '\n';
+    }
+
+    void BFS() {
+        if (root == nullptr) {
+            std::cout << "Tree is empty\n";
+            return;
+        }
+        std::cout << "BFS Traversal:\n";
+        std::queue<Node<T> *> q;
+        q.push(root);
+        while (!q.empty()) {
+            int levelSize = q.size();
+            for (size_t i = 0; i < levelSize; ++i) {
+                Node<T> *node = q.front();
+                q.pop();
+                std::cout << node->val << ' ';
+                if (node->left) {
+                    q.push(node->left);
+                }
+                if (node->right) {
+                    q.push(node->right);
+                }
+            }
+            std::cout << '\n';
+        }
+        std::cout << "End of BFS\n\n";
     }
 };
 
